@@ -22,6 +22,13 @@ ROOT="$(dirname "$DIR")"
 cd "$ROOT"
 
 TAG=$(git rev-parse --short=7 HEAD)
+if [[ $1 != "" ]]; then
+  TAG=$1
+  git checkout "$TAG"
+fi
 
-cloud-build-local --config=build/ci/cloudbuild.push.yaml --dryrun=false \
---substitutions SHORT_SHA="$TAG" .
+gcloud builds submit \
+    --project=datcom-ci \
+    --config=build/ci/cloudbuild.push.yaml \
+    --substitutions SHORT_SHA="$TAG" \
+    .

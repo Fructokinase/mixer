@@ -36,7 +36,6 @@ import "translate.proto";
 
 import "v1/properties.proto";
 import "v1/property_values.proto";
-import "v1/variables.proto";
 import "v1/variable.proto";
 import "v1/info.proto";
 import "v1/observations.proto";
@@ -219,7 +218,7 @@ service Mixer {
     };
   }
 
-  // Given a text search query, return all entities matching the query.
+  // Given a text search query, return all nodes matching the query.
   rpc Search(SearchRequest) returns (SearchResponse) {
     option (google.api.http) = {
       get : "/search"
@@ -365,7 +364,7 @@ service Mixer {
   rpc Properties(datacommons.v1.PropertiesRequest)
       returns (datacommons.v1.PropertiesResponse) {
     option (google.api.http) = {
-      get : "/v1/properties/{direction}/{entity=**}"
+      get : "/v1/properties/{direction}/{node=**}"
     };
   }
 
@@ -383,14 +382,14 @@ service Mixer {
   rpc PropertyValues(datacommons.v1.PropertyValuesRequest)
       returns (datacommons.v1.PropertyValuesResponse) {
     option (google.api.http) = {
-      get : "/v1/property/values/{direction}/{entity_property=**}"
+      get : "/v1/property/values/{direction}/{node_property=**}"
     };
   }
 
   rpc LinkedPropertyValues(datacommons.v1.LinkedPropertyValuesRequest)
       returns (datacommons.v1.PropertyValuesResponse) {
     option (google.api.http) = {
-      get : "/v1/property/values/in/linked/{entity_property=**}"
+      get : "/v1/property/values/in/linked/{node_property=**}"
     };
   }
 
@@ -416,19 +415,18 @@ service Mixer {
     };
   }
 
-  rpc Triples(datacommons.v1.TriplesRequest) returns (datacommons.v1.TriplesResponse) {
+  rpc Triples(datacommons.v1.TriplesRequest)
+      returns (datacommons.v1.TriplesResponse) {
     option (google.api.http) = {
-      get : "/v1/triples/{direction}/{entity=**}"
+      get : "/v1/triples/{direction}/{node=**}"
     };
   }
 
-  rpc BulkTriples(datacommons.v1.BulkTriplesRequest) returns (datacommons.v1.BulkTriplesResponse) {
+  rpc BulkTriples(datacommons.v1.BulkTriplesRequest)
+      returns (datacommons.v1.BulkTriplesResponse) {
     option (google.api.http) = {
       get : "/v1/bulk/triples/{direction}"
-      additional_bindings : {
-        post : "/v1/bulk/triples/{direction}"
-        body : "*"
-      }
+      additional_bindings : {post : "/v1/bulk/triples/{direction}" body : "*"}
     };
   }
 
@@ -450,7 +448,7 @@ service Mixer {
   rpc PlaceInfo(datacommons.v1.PlaceInfoRequest)
       returns (datacommons.v1.PlaceInfoResponse) {
     option (google.api.http) = {
-      get : "/v1/info/place/{entity=**}"
+      get : "/v1/info/place/{node=**}"
     };
   }
 
@@ -465,14 +463,7 @@ service Mixer {
   rpc VariableInfo(datacommons.v1.VariableInfoRequest)
       returns (datacommons.v1.VariableInfoResponse) {
     option (google.api.http) = {
-      get : "/v1/info/variable/{entity=**}"
-    };
-  }
-
-  rpc VariableGroupInfo(datacommons.v1.VariableGroupInfoRequest)
-      returns (StatVarGroupNode) {
-    option (google.api.http) = {
-      get : "/v1/info/variable/group/{dcid=**}"
+      get : "/v1/info/variable/{node=**}"
     };
   }
 
@@ -481,6 +472,21 @@ service Mixer {
     option (google.api.http) = {
       get : "/v1/bulk/info/variable"
       additional_bindings : {post : "/v1/bulk/info/variable" body : "*"}
+    };
+  }
+
+  rpc VariableGroupInfo(datacommons.v1.VariableGroupInfoRequest)
+      returns (datacommons.v1.VariableGroupInfoResponse) {
+    option (google.api.http) = {
+      get : "/v1/info/variable-group/{node=**}"
+    };
+  }
+
+  rpc BulkVariableGroupInfo(datacommons.v1.BulkVariableGroupInfoRequest)
+      returns (datacommons.v1.BulkVariableGroupInfoResponse) {
+    option (google.api.http) = {
+      get : "/v1/bulk/info/variable-group"
+      additional_bindings : {post : "/v1/bulk/info/variable-group" body : "*"}
     };
   }
 
@@ -499,11 +505,15 @@ service Mixer {
     };
   }
 
-  rpc BulkObservationsPointLinked(datacommons.v1.BulkObservationsPointLinkedRequest)
+  rpc BulkObservationsPointLinked(
+      datacommons.v1.BulkObservationsPointLinkedRequest)
       returns (datacommons.v1.BulkObservationsPointResponse) {
     option (google.api.http) = {
       get : "/v1/bulk/observations/point/linked"
-      additional_bindings : {post : "/v1/bulk/observations/point/linked" body : "*"}
+      additional_bindings : {
+        post : "/v1/bulk/observations/point/linked"
+        body : "*"
+      }
     };
   }
 
@@ -522,40 +532,46 @@ service Mixer {
     };
   }
 
-  rpc BulkObservationsSeriesLinked(datacommons.v1.BulkObservationsSeriesLinkedRequest)
+  rpc BulkObservationsSeriesLinked(
+      datacommons.v1.BulkObservationsSeriesLinkedRequest)
       returns (datacommons.v1.BulkObservationsSeriesResponse) {
     option (google.api.http) = {
       get : "/v1/bulk/observations/series/linked"
-      additional_bindings : {post : "/v1/bulk/observations/series/linked" body : "*"}
+      additional_bindings : {
+        post : "/v1/bulk/observations/series/linked"
+        body : "*"
+      }
     };
   }
 
-  rpc BioPage(datacommons.v1.BioPageRequest)
-      returns (GraphNodes) {
+  rpc BioPage(datacommons.v1.BioPageRequest) returns (GraphNodes) {
     option (google.api.http) = {
-      get : "/v1/internal/page/bio/{entity=**}"
+      get : "/v1/internal/page/bio/{node=**}"
     };
   }
 
   rpc PlacePage(datacommons.v1.PlacePageRequest)
       returns (GetPlacePageDataResponse) {
     option (google.api.http) = {
-      get : "/v1/internal/page/place/{entity=**}"
+      get : "/v1/internal/page/place/{node=**}"
     };
   }
 
   rpc VariableAncestors(datacommons.v1.VariableAncestorsRequest)
       returns (datacommons.v1.VariableAncestorsResponse) {
     option (google.api.http) = {
-      get : "/variable/ancestors/{entity=**}"
+      get : "/v1/variable/ancestors/{node=**}"
     };
   }
 
-  rpc VariableGroups(datacommons.v1.VariableGroupsRequest)
-      returns (datacommons.v1.VariableGroupsResponse) {
+  rpc DerivedObservationsSeries(datacommons.v1.DerivedObservationsSeriesRequest)
+      returns (datacommons.v1.DerivedObservationsSeriesResponse) {
     option (google.api.http) = {
-      get : "/v1/variable/groups"
-      additional_bindings : {post : "/v1/variable/groups" body : "*"}
+      get : "/v1/observations/series/derived"
+      additional_bindings : {
+        post : "/v1/observations/series/derived"
+        body : "*"
+      }
     };
   }
 }

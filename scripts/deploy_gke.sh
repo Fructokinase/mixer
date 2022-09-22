@@ -18,9 +18,9 @@
 #
 # Usage:
 #
-# ./deploy_key.sh <"prod"|"staging"|"autopush"|"encode"|"dev"|"private"> <commit_hash>
+# ./deploy_key.sh <"mixer_prod"|"mixer_staging"|"mixer_autopush"|"mixer_encode"|"mixer_dev"|"mixer_private"> <commit_hash>
 #
-# First argument is either "prod" or "staging" or "autopush" or "encode" or "dev".
+# First argument is either "mixer_prod" or "mixer_staging" or "mixer_autopush" or "mixer_encode" or "mixer_dev" or mixer_private.
 # (Optional) second argument is the git commit hash of the mixer repo.
 #
 # !!! WARNING: Run this script in a clean Git checkout at the desired commit.
@@ -33,8 +33,8 @@ set -e
 
 ENV=$1
 
-if [[ $ENV != "staging" && $ENV != "prod" && $ENV != "autopush" && $ENV != "encode" && $ENV != "dev" && $ENV != "private" && $ENV != "recon-prod" && $ENV != "recon-staging" && $ENV != "recon-autopush" ]]; then
-  echo "First argument should be 'staging' or 'prod' or 'autopush' or 'encode' or 'dev' or 'recon-prod' or 'recon-staging' or 'recon-autopush'"
+if [[ $ENV != "mixer_staging" && $ENV != "mixer_prod" && $ENV != "mixer_autopush" && $ENV != "mixer_encode" && $ENV != "mixer_dev" && $ENV != "mixer_private" ]]; then
+  echo "First argument should be 'mixer_staging' or 'mixer_prod' or 'mixer_autopush' or 'mixer_encode' or 'mixer_dev' or 'mixer_private'"
   exit
 fi
 
@@ -54,7 +54,7 @@ echo -n "$TAG" > mixer_hash.txt
 
 cd $ROOT
 
-if [[ $ENV == "autopush" ]]; then
+if [[ $ENV == "mixer_autopush" ]]; then
   # Update bigquery version
   gsutil cp gs://datcom-control/latest_base_bigquery_version.txt deploy/storage/bigquery.version
   # Import group
@@ -64,36 +64,59 @@ if [[ $ENV == "autopush" ]]; then
     echo $(gsutil cat "$src") >> deploy/storage/bigtable_import_groups.version
   done
 fi
-export PROJECT_ID=$(yq eval '.project' deploy/gke/$ENV.yaml)
-export REGION=$(yq eval '.region' deploy/gke/$ENV.yaml)
-export IP=$(yq eval '.ip' deploy/gke/$ENV.yaml)
-export DOMAIN=$(yq eval '.domain' deploy/gke/$ENV.yaml)
-export API_TITLE=$(yq eval '.api_title' deploy/gke/$ENV.yaml)
-export API=$(yq eval '.api' deploy/gke/$ENV.yaml)
+export PROJECT_ID=$(yq eval '.mixer.gcpProjectID' deploy/helm_charts/envs/$ENV.yaml)
+export REGION=$(yq eval '.region' deploy/helm_charts/envs/$ENV.yaml)
+export IP=$(yq eval '.ip' deploy/helm_charts/envs/$ENV.yaml)
+export DOMAIN=$(yq eval '.mixer.serviceName' deploy/helm_charts/envs/$ENV.yaml)
+export API_TITLE=$(yq eval '.api_title' deploy/helm_charts/envs/$ENV.yaml)
 export CLUSTER_NAME=mixer-$REGION
-
-cd $ROOT/deploy/overlays/$ENV
+SPACE_SEPARATED_APIS=$(yq eval '.api' "deploy/helm_charts/envs/$ENV.yaml" | sed 's/-/ /g')
+export APIS=($SPACE_SEPARATED_APIS)
 
 # Deploy to GKE
-kustomize edit set image gcr.io/datcom-ci/datacommons-mixer=gcr.io/datcom-ci/datacommons-mixer:$TAG
-kustomize build > kustomize-build.yaml
-cp kustomization.yaml kustomize-deployed.yaml
 gcloud config set project $PROJECT_ID
 gcloud container clusters get-credentials $CLUSTER_NAME --region $REGION
-kubectl apply -f kustomize-build.yaml
+
+# Change "mixer_prod" for example, to "mixer-prod"
+RELEASE=${ENV//_/-}
+
+# Create a release specific image for the deployment, if it does not exist.
+IMAGE_ERR=$(gcloud container images describe gcr.io/datcom-ci/datacommons-mixer:"$TAG" > /dev/null ; echo $?)
+if [[ "$IMAGE_ERR" == "1" ]];  then ./scripts/push_binary.sh "$TAG"; fi
+
+# Upgrade or install Mixer helm chart into the cluster
+helm upgrade --install "$RELEASE" deploy/helm_charts/mixer \
+  --atomic \
+  -f "deploy/helm_charts/envs/$ENV.yaml" \
+  --set mixer.image.tag="$TAG" \
+  --set mixer.githash="$TAG" \
+  --set-file mixer.schemaConfigs."base\.mcf"=deploy/mapping/base.mcf \
+  --set-file mixer.schemaConfigs."encode\.mcf"=deploy/mapping/encode.mcf \
+  --set-file mixer.schemaConfigs."dailyweather\.mcf"=deploy/mapping/dailyweather.mcf \
+  --set-file mixer.schemaConfigs."monthlyweather\.mcf"=deploy/mapping/monthlyweather.mcf \
+  --set-file kgStoreConfig.bigqueryVersion=deploy/storage/bigquery.version \
+  --set-file kgStoreConfig.bigtableImportGroupsVersion=deploy/storage/bigtable_import_groups.version
 
 # Deploy Cloud Endpoints
 cp $ROOT/esp/endpoints.yaml.tmpl endpoints.yaml
 yq eval -i '.name = env(DOMAIN)' endpoints.yaml
 yq eval -i '.title = env(API_TITLE)' endpoints.yaml
-yq eval -i '.apis[0].name = env(API)' endpoints.yaml
 yq eval -i '.endpoints[0].target = env(IP)' endpoints.yaml
 yq eval -i '.endpoints[0].name = env(DOMAIN)' endpoints.yaml
+# Append apis (ex: datacommons.Mixer) one by one.
+for api in "${APIS[@]}"
+do
+  export API=$api
+  echo "Adding api $API to cloud endpoint config."
+  yq -i '.apis += [{"name": env(API)}]' endpoints.yaml
+done
+echo "endpoints.yaml content:"
+cat endpoints.yaml
+
 gsutil cp gs://datcom-mixer-grpc/mixer-grpc/mixer-grpc.$TAG.pb .
 gcloud endpoints services deploy mixer-grpc.$TAG.pb endpoints.yaml --project $PROJECT_ID
 
 
 # Reset changed file
-git checkout HEAD -- kustomization.yaml
 cd $ROOT
 git checkout HEAD -- deploy/git/mixer_hash.txt

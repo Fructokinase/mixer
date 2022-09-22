@@ -16,8 +16,11 @@ package triples
 
 import (
 	"context"
+	"strings"
 
 	pb "github.com/datacommonsorg/mixer/internal/proto"
+	"github.com/datacommonsorg/mixer/internal/server/node"
+	"github.com/datacommonsorg/mixer/internal/server/resource"
 	"github.com/datacommonsorg/mixer/internal/server/v1/properties"
 	"github.com/datacommonsorg/mixer/internal/server/v1/propertyvalues"
 	"github.com/datacommonsorg/mixer/internal/store"
@@ -27,26 +30,71 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+func getObsTriples(
+	ctx context.Context,
+	store *store.Store,
+	metadata *resource.Metadata,
+	dcids []string,
+) ([]*pb.BulkTriplesResponse_NodeTriples, error) {
+	resp, err := node.GetObsTriples(ctx, store, metadata, dcids)
+	if err != nil {
+		return nil, err
+	}
+	result := []*pb.BulkTriplesResponse_NodeTriples{}
+	for dcid, tripleList := range resp {
+		item := &pb.BulkTriplesResponse_NodeTriples{
+			Node:    dcid,
+			Triples: map[string]*pb.NodeInfoCollection{},
+		}
+		for _, t := range tripleList {
+			item.Triples[t.Predicate] = &pb.NodeInfoCollection{
+				Nodes: []*pb.EntityInfo{
+					{
+						Name:         t.ObjectName,
+						Value:        t.ObjectValue,
+						Types:        t.ObjectTypes,
+						Dcid:         t.ObjectId,
+						ProvenanceId: t.ProvenanceId,
+					},
+				},
+			}
+		}
+		result = append(result, item)
+	}
+	return result, nil
+}
+
 // Triples implements mixer.Triples handler.
 func Triples(
 	ctx context.Context,
 	in *pb.TriplesRequest,
 	store *store.Store,
+	metadata *resource.Metadata,
 ) (*pb.TriplesResponse, error) {
-	entity := in.GetEntity()
+	node := in.GetNode()
 	direction := in.GetDirection()
 	token := in.GetNextToken()
 	if direction != util.DirectionOut && direction != util.DirectionIn {
 		return nil, status.Errorf(
 			codes.InvalidArgument, "uri should be /v1/triples/out/ or /v1/triples/in/")
 	}
-	if !util.CheckValidDCIDs([]string{entity}) {
+	if !util.CheckValidDCIDs([]string{node}) {
 		return nil, status.Errorf(
-			codes.InvalidArgument, "invalid entity %s", entity)
+			codes.InvalidArgument, "invalid node %s", node)
 	}
+	if direction == util.DirectionOut && strings.HasPrefix(node, "dc/o/") {
+		resp, err := getObsTriples(ctx, store, metadata, []string{node})
+		if err != nil {
+			return nil, err
+		}
+		return &pb.TriplesResponse{
+			Triples: resp[0].Triples,
+		}, nil
+	}
+
 	propsResp, err := properties.Properties(
 		ctx, &pb.PropertiesRequest{
-			Entity:    entity,
+			Node:      node,
 			Direction: direction,
 		},
 		store,
@@ -58,7 +106,7 @@ func Triples(
 	data, pi, err := propertyvalues.Fetch(
 		ctx,
 		store,
-		[]string{entity},
+		[]string{node},
 		properties,
 		0,
 		token,
@@ -68,11 +116,11 @@ func Triples(
 		return nil, err
 	}
 	res := &pb.TriplesResponse{
-		Triples: map[string]*pb.EntityInfoCollection{},
+		Triples: map[string]*pb.NodeInfoCollection{},
 	}
-	for p := range data[entity] {
-		res.Triples[p] = &pb.EntityInfoCollection{
-			Entities: propertyvalues.MergeTypedEntities(data[entity][p]),
+	for p := range data[node] {
+		res.Triples[p] = &pb.NodeInfoCollection{
+			Nodes: propertyvalues.MergeTypedNodes(data[node][p]),
 		}
 	}
 	if pi != nil {
@@ -90,21 +138,33 @@ func BulkTriples(
 	ctx context.Context,
 	in *pb.BulkTriplesRequest,
 	store *store.Store,
+	metadata *resource.Metadata,
 ) (*pb.BulkTriplesResponse, error) {
-	entities := in.GetEntities()
+	dcids := in.GetNodes()
 	direction := in.GetDirection()
 	token := in.GetNextToken()
 	if direction != util.DirectionOut && direction != util.DirectionIn {
 		return nil, status.Errorf(
 			codes.InvalidArgument, "uri should be /v1/triples/out/ or /v1/triples/in/")
 	}
-	if !util.CheckValidDCIDs(entities) {
+	if !util.CheckValidDCIDs(dcids) {
 		return nil, status.Errorf(
-			codes.InvalidArgument, "invalid entities %s", entities)
+			codes.InvalidArgument, "invalid nodes %s", dcids)
 	}
+
+	// Need to fetch additional information for observation node.
+	var regularDcids, obsDcids []string
+	for _, dcid := range dcids {
+		if strings.HasPrefix(dcid, "dc/o/") {
+			obsDcids = append(obsDcids, dcid)
+		} else {
+			regularDcids = append(regularDcids, dcid)
+		}
+	}
+
 	bulkPropsResp, err := properties.BulkProperties(
 		ctx, &pb.BulkPropertiesRequest{
-			Entities:  entities,
+			Nodes:     regularDcids,
 			Direction: direction,
 		},
 		store,
@@ -114,20 +174,20 @@ func BulkTriples(
 	}
 	bulkProps := bulkPropsResp.GetData()
 	entityProps := map[string]map[string]struct{}{}
-	for _, e := range entities {
+	for _, e := range regularDcids {
 		entityProps[e] = map[string]struct{}{}
 	}
 	properties := []string{}
 	for _, resp := range bulkProps {
 		for _, p := range resp.GetProperties() {
-			entityProps[resp.GetEntity()][p] = struct{}{}
+			entityProps[resp.GetNode()][p] = struct{}{}
 		}
 		properties = util.MergeDedupe(properties, resp.GetProperties())
 	}
 	data, pi, err := propertyvalues.Fetch(
 		ctx,
 		store,
-		entities,
+		regularDcids,
 		properties,
 		0,
 		token,
@@ -137,30 +197,30 @@ func BulkTriples(
 		return nil, err
 	}
 	res := &pb.BulkTriplesResponse{
-		Data: []*pb.BulkTriplesResponse_EntityTriples{},
+		Data: []*pb.BulkTriplesResponse_NodeTriples{},
 	}
 	triplesByEntity := map[string]map[string][]*pb.EntityInfo{}
-	for _, e := range entities {
-		triplesByEntity[e] = map[string][]*pb.EntityInfo{}
+	for _, n := range regularDcids {
+		triplesByEntity[n] = map[string][]*pb.EntityInfo{}
 	}
-	for e := range data {
-		for p := range data[e] {
-			if _, ok := entityProps[e][p]; ok {
-				entities := propertyvalues.MergeTypedEntities(data[e][p])
-				if len(entities) > 0 {
-					triplesByEntity[e][p] = entities
+	for n := range data {
+		for p := range data[n] {
+			if _, ok := entityProps[n][p]; ok {
+				nodes := propertyvalues.MergeTypedNodes(data[n][p])
+				if len(nodes) > 0 {
+					triplesByEntity[n][p] = nodes
 				}
 			}
 		}
 	}
-	for _, e := range entities {
-		entityTriples := &pb.BulkTriplesResponse_EntityTriples{
-			Entity:  e,
-			Triples: map[string]*pb.EntityInfoCollection{},
+	for _, n := range regularDcids {
+		entityTriples := &pb.BulkTriplesResponse_NodeTriples{
+			Node:    n,
+			Triples: map[string]*pb.NodeInfoCollection{},
 		}
-		for p := range triplesByEntity[e] {
-			entityTriples.Triples[p] = &pb.EntityInfoCollection{
-				Entities: triplesByEntity[e][p],
+		for p := range triplesByEntity[n] {
+			entityTriples.Triples[p] = &pb.NodeInfoCollection{
+				Nodes: triplesByEntity[n][p],
 			}
 		}
 		res.Data = append(res.Data, entityTriples)
@@ -172,6 +232,14 @@ func BulkTriples(
 			return nil, err
 		}
 		res.NextToken = nextToken
+	}
+
+	if direction == util.DirectionOut && len(obsDcids) > 0 {
+		obsResp, err := getObsTriples(ctx, store, metadata, obsDcids)
+		if err != nil {
+			return nil, err
+		}
+		res.Data = append(res.Data, obsResp...)
 	}
 	return res, nil
 }

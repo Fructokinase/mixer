@@ -17,17 +17,17 @@ option go_package = "./proto";
 package datacommons.v1;
 
 message PropertiesRequest {
-  string entity = 1;
+  string node = 1;
   // Direction can only be "in" or "out"
   string direction = 2;
 }
 message PropertiesResponse {
-  string entity = 1;
+  string node = 1;
   repeated string properties = 2;
 }
 
 message BulkPropertiesRequest {
-  repeated string entities = 1;
+  repeated string nodes = 1;
   // Direction can only be "in" or "out"
   string direction = 2;
 }

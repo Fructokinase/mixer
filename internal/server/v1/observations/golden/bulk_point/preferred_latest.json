@@ -200,8 +200,8 @@
           "entity": "geoId/06",
           "points_by_facet": [
             {
-              "date": "2022-06",
-              "value": 819453,
+              "date": "2022-08",
+              "value": 790885,
               "facet": 1249140336
             }
           ]
@@ -231,8 +231,8 @@
           "entity": "country/USA",
           "points_by_facet": [
             {
-              "date": "2022-07-31",
-              "value": 91119397,
+              "date": "2022-09-19",
+              "value": 95514998,
               "facet": 2232540893
             }
           ]
@@ -241,8 +241,8 @@
           "entity": "geoId/06",
           "points_by_facet": [
             {
-              "date": "2022-07-31",
-              "value": 10700053,
+              "date": "2022-09-19",
+              "value": 11199912,
               "facet": 2232540893
             }
           ]

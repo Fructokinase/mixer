@@ -82,14 +82,14 @@ func (s *Server) BulkPropertyValues(
 func (s *Server) Triples(
 	ctx context.Context, in *pb.TriplesRequest,
 ) (*pb.TriplesResponse, error) {
-	return triples.Triples(ctx, in, s.store)
+	return triples.Triples(ctx, in, s.store, s.metadata)
 }
 
 // BulkTriples implements API for mixer.BulkTriples.
 func (s *Server) BulkTriples(
 	ctx context.Context, in *pb.BulkTriplesRequest,
 ) (*pb.BulkTriplesResponse, error) {
-	return triples.BulkTriples(ctx, in, s.store)
+	return triples.BulkTriples(ctx, in, s.store, s.metadata)
 }
 
 // Variables implements API for mixer.Variables.
@@ -127,18 +127,25 @@ func (s *Server) VariableInfo(
 	return info.VariableInfo(ctx, in, s.store)
 }
 
-// VariableGroupInfo implements API for mixer.VariableGroupInfo.
-func (s *Server) VariableGroupInfo(
-	ctx context.Context, in *pb.VariableGroupInfoRequest,
-) (*pb.StatVarGroupNode, error) {
-	return info.VariableGroupInfo(ctx, in, s.store, s.cache)
-}
-
 // BulkVariableInfo implements API for mixer.BulkVariableInfo.
 func (s *Server) BulkVariableInfo(
 	ctx context.Context, in *pb.BulkVariableInfoRequest,
 ) (*pb.BulkVariableInfoResponse, error) {
 	return info.BulkVariableInfo(ctx, in, s.store)
+}
+
+// VariableGroupInfo implements API for mixer.VariableGroupInfo.
+func (s *Server) VariableGroupInfo(
+	ctx context.Context, in *pb.VariableGroupInfoRequest,
+) (*pb.VariableGroupInfoResponse, error) {
+	return info.VariableGroupInfo(ctx, in, s.store, s.cache)
+}
+
+// BulkVariableGroupInfo implements API for mixer.BulkVariableGroupInfo.
+func (s *Server) BulkVariableGroupInfo(
+	ctx context.Context, in *pb.BulkVariableGroupInfoRequest,
+) (*pb.BulkVariableGroupInfoResponse, error) {
+	return info.BulkVariableGroupInfo(ctx, in, s.store, s.cache)
 }
 
 // ObservationsPoint implements API for mixer.ObservationsPoint.
@@ -204,9 +211,9 @@ func (s *Server) VariableAncestors(
 	return variable.Ancestors(ctx, in, s.store, s.cache)
 }
 
-// VariableGroups implements API for Mixer.VariableGroups.
-func (s *Server) VariableGroups(
-	ctx context.Context, in *pb.VariableGroupsRequest,
-) (*pb.VariableGroupsResponse, error) {
-	return variable.Groups(ctx, in, s.store, s.cache)
+// DerivedObservationsSeries implements API for mixer.ObservationsSeries.
+func (s *Server) DerivedObservationsSeries(
+	ctx context.Context, in *pb.DerivedObservationsSeriesRequest,
+) (*pb.DerivedObservationsSeriesResponse, error) {
+	return observations.DerivedSeries(ctx, in, s.store)
 }

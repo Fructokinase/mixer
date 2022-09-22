@@ -25,11 +25,11 @@ type heapElem struct {
 	data *pb.EntityInfo
 }
 
-// An entityHeap is a min-heap of entity.
-type entityHeap []*heapElem
+// An nodeHeap is a min-heap of node.
+type nodeHeap []*heapElem
 
-func (h entityHeap) Len() int { return len(h) }
-func (h entityHeap) Less(i, j int) bool {
+func (h nodeHeap) Len() int { return len(h) }
+func (h nodeHeap) Less(i, j int) bool {
 	di := h[i].data
 	dj := h[j].data
 	// This needs to match the sorting in cache builder "triple_helper.cc"
@@ -37,19 +37,19 @@ func (h entityHeap) Less(i, j int) bool {
 	// std::string EntityInfoSortKey(const EntityInfo& entity_info) {
 	// return absl::StrJoin(
 	//     {entity_info.dcid(), entity_info.value(), entity_info.provenance_id()},
-	//     kStringConnector);
+	//      "!"});
 	// }
-	return di.Dcid+"^"+di.Value < dj.Dcid+"^"+dj.Value
+	return di.Dcid+"!"+di.Value < dj.Dcid+"!"+dj.Value
 }
-func (h entityHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
+func (h nodeHeap) Swap(i, j int) { h[i], h[j] = h[j], h[i] }
 
-func (h *entityHeap) Push(x interface{}) {
+func (h *nodeHeap) Push(x interface{}) {
 	// Push and Pop use pointer receivers because they modify the slice's length,
 	// not just its contents.
 	*h = append(*h, x.(*heapElem))
 }
 
-func (h *entityHeap) Pop() interface{} {
+func (h *nodeHeap) Pop() interface{} {
 	old := *h
 	n := len(old)
 	x := old[n-1]

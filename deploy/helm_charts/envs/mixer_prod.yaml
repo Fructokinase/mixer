@@ -1,0 +1,55 @@
+# Helm config
+mixer:
+  gcpProjectID: datcom-mixer
+  serviceName: api.datacommons.org
+
+ingress:
+  name: mixer-ingress-prod
+  annotations:
+    {
+      ingress.gcp.kubernetes.io/pre-shared-cert: "mixer-certificate,multi-domain-2022",
+    }
+
+serviceGroups:
+  - mixer-svg-service:
+      urlPaths:
+        - "/place/stat-var-group/*"
+        - "/stat-var/*"
+        - "/v1/info/variable/group/*"
+        - "/v1/variable/*"
+      replicas:
+        default: 10
+        min: 10
+        max: 40
+      resources:
+        memoryRequest: "8G"
+        memoryLimit: "8G"
+  - recon:
+      urlPaths:
+        - "/v1/recon/*"
+      replicas:
+        default: 4
+        min: 4
+        max: 8
+      resources:
+        memoryRequest: "3G"
+        memoryLimit: "3G"
+  - mixer-default-service:
+      urlPaths:
+        - "/*"
+      replicas:
+        default: 20
+        min: 20
+        max: 40
+      resources:
+        memoryRequest: "2G"
+        memoryLimit: "2G"
+
+# GCP level config
+ip: 35.244.133.155
+region: us-central1
+api_title: DataCommons API
+api:
+  - datacommons.Mixer
+  - datacommons.Recon
+nodes: 6

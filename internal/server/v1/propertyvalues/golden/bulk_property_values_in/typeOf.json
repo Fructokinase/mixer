@@ -1,7 +1,7 @@
 {
   "data": [
     {
-      "entity": "Country",
+      "node": "Country",
       "values": [
         {
           "name": "Aruba",
@@ -17,7 +17,7 @@
             "Country"
           ],
           "dcid": "country/AFG",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "French Afars and Issas",
@@ -90,7 +90,7 @@
             "Country"
           ],
           "dcid": "country/ARM",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "American Samoa",
@@ -99,7 +99,7 @@
             "Country"
           ],
           "dcid": "country/ASM",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Antarctica",
@@ -164,7 +164,7 @@
             "Country"
           ],
           "dcid": "country/AZE",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Burundi",
@@ -188,7 +188,7 @@
             "Country"
           ],
           "dcid": "country/BEN",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Bonaire, Sint Eustatius and Saba",
@@ -212,7 +212,7 @@
             "Country"
           ],
           "dcid": "country/BGD",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Bulgaria",
@@ -236,7 +236,7 @@
             "Country"
           ],
           "dcid": "country/BHS",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Bosnia and Herzegovina",
@@ -260,7 +260,7 @@
             "Country"
           ],
           "dcid": "country/BLR",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Belize",
@@ -285,7 +285,7 @@
             "Country"
           ],
           "dcid": "country/BOL",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Brazil",
@@ -309,7 +309,7 @@
             "Country"
           ],
           "dcid": "country/BRN",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Bhutan",
@@ -333,7 +333,7 @@
             "Country"
           ],
           "dcid": "country/BWA",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Byelorussian SSR",
@@ -357,7 +357,7 @@
             "Country"
           ],
           "dcid": "country/CAN",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Cocos (Keeling) Islands",
@@ -382,7 +382,7 @@
             "Country"
           ],
           "dcid": "country/CHL",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "China",
@@ -406,7 +406,7 @@
             "Country"
           ],
           "dcid": "country/CMR",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Congo [DRC]",
@@ -430,7 +430,7 @@
             "Country"
           ],
           "dcid": "country/COK",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Colombia",
@@ -454,7 +454,7 @@
             "Country"
           ],
           "dcid": "country/CPV",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Costa Rica",
@@ -528,7 +528,7 @@
             "Country"
           ],
           "dcid": "country/CZE",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "German Democratic Republic",
@@ -577,7 +577,7 @@
             "Country"
           ],
           "dcid": "country/DNK",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Dominican Republic",
@@ -601,7 +601,7 @@
             "Country"
           ],
           "dcid": "country/ECU",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Egypt",
@@ -625,7 +625,7 @@
             "Country"
           ],
           "dcid": "country/ESH",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Spain",
@@ -649,7 +649,7 @@
             "Country"
           ],
           "dcid": "country/ETH",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Finland",
@@ -699,7 +699,7 @@
             "Country"
           ],
           "dcid": "country/FSM",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Metropolitan France",
@@ -723,7 +723,7 @@
             "Country"
           ],
           "dcid": "country/GBR",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Gilbert and Ellice Islands",
@@ -747,7 +747,7 @@
             "Country"
           ],
           "dcid": "country/GGY",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Ghana",
@@ -764,7 +764,7 @@
             "Country"
           ],
           "dcid": "country/GIB",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Guinea",
@@ -772,7 +772,7 @@
             "Country"
           ],
           "dcid": "country/GIN",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Guadeloupe",
@@ -798,7 +798,7 @@
             "Country"
           ],
           "dcid": "country/GNB",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Equatorial Guinea",
@@ -822,7 +822,7 @@
             "Country"
           ],
           "dcid": "country/GRD",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Greenland",
@@ -849,7 +849,7 @@
             "Country"
           ],
           "dcid": "country/GUF",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Guam",
@@ -901,7 +901,7 @@
             "Country"
           ],
           "dcid": "country/HRV",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Haiti",
@@ -976,7 +976,7 @@
             "Country"
           ],
           "dcid": "country/MAC",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Northern Mariana Islands",
@@ -985,7 +985,7 @@
             "Country"
           ],
           "dcid": "country/MNP",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Montserrat",
@@ -1042,7 +1042,7 @@
             "Country"
           ],
           "dcid": "country/REU",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "South Georgia and the South Sandwich Islands",
@@ -1069,7 +1069,7 @@
             "Country"
           ],
           "dcid": "country/TCA",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "U.S. Minor Outlying Islands",
@@ -1092,7 +1092,7 @@
       ]
     },
     {
-      "entity": "State",
+      "node": "State",
       "values": [
         {
           "name": "Alabama",
@@ -2005,7 +2005,7 @@
             "State"
           ],
           "dcid": "wikidataId/Q46107",
-          "provenanceId": "dc/p1b12e3"
+          "provenanceId": "dc/pnqh772"
         },
         {
           "name": "Jammu and Kashmir",
@@ -2046,7 +2046,7 @@
       ]
     },
     {
-      "entity": "City",
+      "node": "City",
       "values": [
         {
           "name": "Hong Kong",
@@ -2066,7 +2066,7 @@
             "Country"
           ],
           "dcid": "country/MAC",
-          "provenanceId": "dc/5n63hr1"
+          "provenanceId": "dc/sgvysq3"
         },
         {
           "name": "Abanda",
@@ -7519,6 +7519,17 @@
           "provenanceId": "dc/5n63hr1"
         },
         {
+          "name": "Berlin",
+          "types": [
+            "AdministrativeArea1",
+            "AdministrativeArea4",
+            "City",
+            "EurostatNUTS1"
+          ],
+          "dcid": "nuts/DE3",
+          "provenanceId": "dc/5n63hr1"
+        },
+        {
           "types": [
             "City",
             "EurostatNUTS3"
@@ -7532,17 +7543,6 @@
             "EurostatNUTS3"
           ],
           "dcid": "nuts/DE302",
-          "provenanceId": "dc/5n63hr1"
-        },
-        {
-          "name": "Berlin",
-          "types": [
-            "AdministrativeArea1",
-            "AdministrativeArea4",
-            "City",
-            "EurostatNUTS1"
-          ],
-          "dcid": "nuts/DE3",
           "provenanceId": "dc/5n63hr1"
         },
         {
@@ -8740,6 +8740,15 @@
           "provenanceId": "dc/5n63hr1"
         },
         {
+          "name": "Deventer",
+          "types": [
+            "AdministrativeArea2",
+            "City"
+          ],
+          "dcid": "wikidataId/Q10001",
+          "provenanceId": "dc/5n63hr1"
+        },
+        {
           "name": "Tocha, Portugal",
           "types": [
             "AdministrativeArea3",
@@ -8756,15 +8765,6 @@
             "City"
           ],
           "dcid": "wikidataId/Q1000135",
-          "provenanceId": "dc/5n63hr1"
-        },
-        {
-          "name": "Deventer",
-          "types": [
-            "AdministrativeArea2",
-            "City"
-          ],
-          "dcid": "wikidataId/Q10001",
           "provenanceId": "dc/5n63hr1"
         },
         {
@@ -9039,6 +9039,15 @@
           "provenanceId": "dc/5n63hr1"
         },
         {
+          "name": "Zwartewaterland",
+          "types": [
+            "AdministrativeArea2",
+            "City"
+          ],
+          "dcid": "wikidataId/Q10026",
+          "provenanceId": "dc/5n63hr1"
+        },
+        {
           "name": "Wielichowo",
           "types": [
             "AdministrativeArea3",
@@ -9072,15 +9081,6 @@
             "City"
           ],
           "dcid": "wikidataId/Q1002696",
-          "provenanceId": "dc/5n63hr1"
-        },
-        {
-          "name": "Zwartewaterland",
-          "types": [
-            "AdministrativeArea2",
-            "City"
-          ],
-          "dcid": "wikidataId/Q10026",
           "provenanceId": "dc/5n63hr1"
         },
         {
@@ -10873,6 +10873,15 @@
           "provenanceId": "dc/5n63hr1"
         },
         {
+          "name": "Phnom Penh",
+          "types": [
+            "AdministrativeArea1",
+            "City"
+          ],
+          "dcid": "wikidataId/Q1850",
+          "provenanceId": "dc/5n63hr1"
+        },
+        {
           "name": "Cholet",
           "types": [
             "AdministrativeArea4",
@@ -10880,15 +10889,6 @@
             "City"
           ],
           "dcid": "wikidataId/Q185066",
-          "provenanceId": "dc/5n63hr1"
-        },
-        {
-          "name": "Phnom Penh",
-          "types": [
-            "AdministrativeArea1",
-            "City"
-          ],
-          "dcid": "wikidataId/Q1850",
           "provenanceId": "dc/5n63hr1"
         },
         {
@@ -11734,6 +11734,15 @@
           "provenanceId": "dc/5n63hr1"
         },
         {
+          "name": "Tashkent",
+          "types": [
+            "AdministrativeArea1",
+            "City"
+          ],
+          "dcid": "wikidataId/Q269",
+          "provenanceId": "dc/5n63hr1"
+        },
+        {
           "name": "Hope Town",
           "types": [
             "AdministrativeArea1",
@@ -11780,15 +11789,6 @@
           "provenanceId": "dc/5n63hr1"
         },
         {
-          "name": "Funafuti",
-          "types": [
-            "AdministrativeArea1",
-            "City"
-          ],
-          "dcid": "wikidataId/Q34126",
-          "provenanceId": "dc/5n63hr1"
-        },
-        {
           "name": "Chandigarh",
           "types": [
             "AdministrativeArea1",
@@ -11801,5 +11801,5 @@
       ]
     }
   ],
-  "nextToken": "H4sIAAAAAAAA/4zPwUuHMBTA8d9s5hidXpf9EUFkdupk3usS3Y1tOjSXay78M/yPwzFGCMJOY4/34cujzxQ3yq702q7f4k3S25p/qUn9WNNa5URtRPsAF8AEsQEwydgAGbkCTDAbUnAZ8OzxHPGcgh8D5h7ziHkKrgKWHsuIZQp+Oi3fH3Dxoo1euj4Z+B9cICeIbQhyku3Pvp8TzDZEqwO4eRWq6z+16bXmp5m7Y+Zd/07pV3yocWw7cQpKWjR6maz5Z8IgGOeNi8b9AQAA//8BAAD//+AeVuVcAgAA"
+  "nextToken": "H4sIAAAAAAAA/4zOzWqEMBDAcYxaQ+hpeplHKBRKP+nZem8vpXeXJBpxzZqNWXyMfePFsIRFPOQUMvx/k7AvllXKzuzOzgfxK9lDyfdqUEdraqucKI2oX4FgBxlNsANCCWQ0xS4GvgHB0cMxwDEGvgNB7iEPkMfADyAoPZQByhj4ufni0woW39roqWmjYn+DFM8J5DRZjqXN6TJhL6v4/keopt1p02rNN9c/rtf/6dMQ9+t/1fd1IzbjZ1ZUehqsuemvAyDofO9C7y4AAAD//wEAAP//O2JvWDACAAA="
 }

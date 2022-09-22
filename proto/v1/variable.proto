@@ -16,11 +16,29 @@ syntax = "proto3";
 option go_package = "./proto";
 package datacommons.v1;
 
-import "stat_var.proto";
+
+message VariablesRequest {
+  string entity = 1;
+}
+
+message VariablesResponse {
+  string entity = 1;
+  repeated string variables = 2;
+}
+
+message BulkVariablesRequest {
+  repeated string entities = 1;
+  // If set, return the union of all variables of all entities.
+  bool union = 2;
+}
+
+message BulkVariablesResponse {
+  repeated VariablesResponse data = 1;
+}
 
 message VariableAncestorsRequest {
   // DCID of a stat var (group)
-  string entity = 1;
+  string node = 1;
 }
 
 message VariableAncestorsResponse {
@@ -31,15 +49,4 @@ message VariableAncestorsResponse {
   // ancestor stat var (groups) to select at a level, the first one in
   // alphabetical sorted order is selected.
   repeated string ancestors = 1;
-}
-
-message VariableGroupsRequest {
-  // (optional) When specified, only return the variable groups that the entities
-  // have data for.
-  repeated string entities = 1;
-}
-
-message VariableGroupsResponse {
-  // Key is StatVar Group ID.
-  map<string, StatVarGroupNode> data = 1;
 }

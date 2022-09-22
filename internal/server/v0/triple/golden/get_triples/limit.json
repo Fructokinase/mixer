@@ -18,7 +18,7 @@
       ],
       "predicate": "provenance",
       "objectId": "dc/5l5zxr1",
-      "objectName": "https://datacommons.org",
+      "objectName": "BaseSchema",
       "objectTypes": [
         "Provenance"
       ],
@@ -96,7 +96,7 @@
       "objectTypes": [
         "Class"
       ],
-      "provenanceId": "dc/5n63hr1"
+      "provenanceId": "dc/sgvysq3"
     },
     {
       "subjectId": "geoId/0100100",
@@ -700,7 +700,7 @@
       ],
       "predicate": "provenance",
       "objectId": "dc/5l5zxr1",
-      "objectName": "https://datacommons.org",
+      "objectName": "BaseSchema",
       "objectTypes": [
         "Provenance"
       ],

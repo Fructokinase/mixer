@@ -18,7 +18,6 @@ import (
 	"context"
 
 	pb "github.com/datacommonsorg/mixer/internal/proto"
-	"github.com/datacommonsorg/mixer/internal/server/resource"
 	"github.com/datacommonsorg/mixer/internal/server/statvar"
 	"github.com/datacommonsorg/mixer/internal/store"
 	"github.com/datacommonsorg/mixer/internal/util"
@@ -32,16 +31,16 @@ func VariableInfo(
 	in *pb.VariableInfoRequest,
 	store *store.Store,
 ) (*pb.VariableInfoResponse, error) {
-	entity := in.GetEntity()
-	if !util.CheckValidDCIDs([]string{entity}) {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid entity")
+	node := in.GetNode()
+	if !util.CheckValidDCIDs([]string{node}) {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid node")
 	}
-	statVarToSummary, err := statvar.GetStatVarSummaryHelper(ctx, []string{entity}, store)
+	statVarToSummary, err := statvar.GetStatVarSummaryHelper(ctx, []string{node}, store)
 	if err != nil {
 		return nil, err
 	}
-	resp := &pb.VariableInfoResponse{Entity: entity}
-	if summary, ok := statVarToSummary[entity]; ok {
+	resp := &pb.VariableInfoResponse{Node: node}
+	if summary, ok := statVarToSummary[node]; ok {
 		resp.Info = summary
 	}
 	return resp, nil
@@ -53,42 +52,24 @@ func BulkVariableInfo(
 	in *pb.BulkVariableInfoRequest,
 	store *store.Store,
 ) (*pb.BulkVariableInfoResponse, error) {
-	entities := in.GetEntities()
-	if len(entities) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "Missing required arguments: entities")
+	nodes := in.GetNodes()
+	if len(nodes) == 0 {
+		return nil, status.Error(codes.InvalidArgument, "Missing required arguments: nodes")
 	}
-	if !util.CheckValidDCIDs(entities) {
-		return nil, status.Errorf(codes.InvalidArgument, "Invalid entities")
+	if !util.CheckValidDCIDs(nodes) {
+		return nil, status.Errorf(codes.InvalidArgument, "Invalid nodes")
 	}
-	statVarToSummary, err := statvar.GetStatVarSummaryHelper(ctx, entities, store)
+	statVarToSummary, err := statvar.GetStatVarSummaryHelper(ctx, nodes, store)
 	if err != nil {
 		return nil, err
 	}
 	resp := &pb.BulkVariableInfoResponse{}
-	for _, entity := range entities {
-		item := &pb.VariableInfoResponse{Entity: entity}
-		if summary, ok := statVarToSummary[entity]; ok {
+	for _, node := range nodes {
+		item := &pb.VariableInfoResponse{Node: node}
+		if summary, ok := statVarToSummary[node]; ok {
 			item.Info = summary
 		}
 		resp.Data = append(resp.Data, item)
 	}
 	return resp, nil
-}
-
-// VariableGroupInfo implements API for Mixer.VariableGroupInfo.
-func VariableGroupInfo(
-	ctx context.Context,
-	in *pb.VariableGroupInfoRequest,
-	store *store.Store,
-	cache *resource.Cache,
-) (*pb.StatVarGroupNode, error) {
-	return statvar.GetStatVarGroupNode(
-		ctx,
-		&pb.GetStatVarGroupNodeRequest{
-			StatVarGroup: in.GetDcid(),
-			Entities:     in.GetEntities(),
-		},
-		store,
-		cache,
-	)
 }

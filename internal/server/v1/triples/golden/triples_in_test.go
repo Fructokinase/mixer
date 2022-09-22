@@ -36,7 +36,7 @@ func TestTriplesIn(t *testing.T) {
 	testSuite := func(mixer pb.MixerClient, recon pb.ReconClient, latencyTest bool) {
 		for _, c := range []struct {
 			goldenFile string
-			entity     string
+			node       string
 			token      string
 		}{
 			{
@@ -52,7 +52,7 @@ func TestTriplesIn(t *testing.T) {
 			{
 				"BiologicalSpecimen2.json",
 				"BiologicalSpecimen",
-				"H4sIAAAAAAAA/+Jy4RJyyszPyU/PTE7MCS5ITc7MTc3jYiupLEj1T8MmJ8QgxMTBKMTEwSTEwsEsAGKxAAAAAP//AQAA//80N7XRRgAAAA==",
+				"H4sIAAAAAAAA/+Jy4BJyyszPyU/PTE7MCS5ITc7MTc3jYiupLEj1T8MmJ8QgxMTBKMTCwSTAKMTEwQwAAAD//wEAAP//jig5NEIAAAA=",
 			},
 			{
 				"Count_Person.json",
@@ -61,7 +61,7 @@ func TestTriplesIn(t *testing.T) {
 			},
 		} {
 			req := &pb.TriplesRequest{
-				Entity:    c.entity,
+				Node:      c.node,
 				Direction: "in",
 				NextToken: c.token,
 			}
