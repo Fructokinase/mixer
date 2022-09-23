@@ -25,6 +25,7 @@ import (
 	"github.com/datacommonsorg/mixer/internal/store/bigtable"
 	"github.com/golang/geo/s2"
 	"google.golang.org/protobuf/proto"
+    "go.opentelemetry.io/otel"
 )
 
 const (
@@ -39,6 +40,11 @@ func ResolveCoordinates(
 	ctx context.Context, in *pb.ResolveCoordinatesRequest, store *store.Store) (
 	*pb.ResolveCoordinatesResponse, error,
 ) {
+	// Experimantal Cloud Trace setup.
+	tracer := otel.GetTracerProvider().Tracer("mixer/trace")
+	reqCtx, reqSpan := tracer.Start(ctx, "ResolveCoordinates")
+	defer reqSpan.End()
+
 	// Map: lat^lng => normalized lat^lng.
 	normCoordinateMap := map[string]string{}
 	coordinateLookupKeys := map[string]struct{}{}
@@ -55,6 +61,7 @@ func ResolveCoordinates(
 	for key := range coordinateLookupKeys {
 		keyBody = append(keyBody, key)
 	}
+	_, btReadSpan := tracer.Start(reqCtx, "Read Big Table")
 	reconDataList, err := bigtable.Read(
 		ctx,
 		store.BtGroup,
@@ -68,9 +75,11 @@ func ResolveCoordinates(
 			return &recon, nil
 		},
 	)
+	btReadSpan.End()
 	if err != nil {
 		return nil, err
 	}
+
 
 	// Collect places that don't fully cover the tiles that the coordinates are in.
 	questionablePlaces := map[string]struct{}{}
@@ -92,8 +101,10 @@ func ResolveCoordinates(
 	for place := range questionablePlaces {
 		questionablePlaceList = append(questionablePlaceList, place)
 	}
+	_, getPropValSpan := tracer.Start(reqCtx, "Get GEO JSON prop val")
 	geoJSONData, err := propertyvalue.GetPropertyValuesHelper(
 		ctx, store, questionablePlaceList, geoJSONPredicate, true)
+	getPropValSpan.End()
 	if err != nil {
 		return nil, err
 	}
@@ -103,6 +114,8 @@ func ResolveCoordinates(
 	}
 
 	// Assemble response.
+	_, resAssembleSpan := tracer.Start(reqCtx, "Assemble response")
+	defer resAssembleSpan.End()
 	res := &pb.ResolveCoordinatesResponse{}
 	for _, co := range in.GetCoordinates() {
 		nKey := normCoordinateMap[coordinateKey(co)]

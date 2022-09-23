@@ -34,6 +34,7 @@ import (
 	"github.com/datacommonsorg/mixer/internal/store"
 	"github.com/datacommonsorg/mixer/internal/store/bigtable"
 	"github.com/datacommonsorg/mixer/internal/store/memdb"
+	"github.com/datacommonsorg/mixer/internal/telemetry"
 	"github.com/datacommonsorg/mixer/internal/util"
 	"golang.org/x/oauth2/google"
 
@@ -74,6 +75,8 @@ var (
 	startupMemoryProfile = flag.String("startup_memprof", "", "File path to write the memory profile of mixer startup to")
 	// Serve live profiles of the process (CPU, memory, etc.) over HTTP on this port
 	httpProfilePort = flag.Int("httpprof_port", 0, "Port to serve HTTP profiles from")
+	// Enable distributed trace using Open Telemetry client.
+	enableCloudTrace = flag.Bool("enable_cloud_trace", false, "Enabling will send metrics to Cloud Trace")
 )
 
 const (
@@ -250,6 +253,12 @@ func main() {
 			log.Printf("%s\n", http.ListenAndServe(httpProfileFrom, nil))
 		}()
 	}
+
+	if *enableCloudTrace {
+		tp := telemetry.Init(ctx, *mixerProject)
+		defer tp.ForceFlush(ctx) // flushes any pending spans
+	}
+
 
 	// Listen on network
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
